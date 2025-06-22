@@ -1,0 +1,14 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h3><span>S</span>taff CMS</h3>
+  </div>
+  <ul class="sidebar-menu">
+    <li *ngFor="let link of links">
+      <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+    </li>
+    <li>
+      <!-- <a href="#" (click)="logout()">ออกจากระบบ</a> -->
+      <span class="logout-link" (click)="logout()">ออกจากระบบ</span>
+    </li>
+  </ul>
+</nav>

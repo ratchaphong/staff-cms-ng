@@ -1,0 +1,72 @@
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background-color: var(--color-text);
+  color: var(--color-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+
+  .sidebar-header {
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--color-subtle);
+      font-family: "Noto Sans Thai", sans-serif;
+
+      span {
+        font-size: 6rem;
+        color: var(--color-primary);
+        letter-spacing: 0px;
+        font-family: "Pacifico", cursive;
+      }
+    }
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    li {
+      a {
+        display: block;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        color: var(--color-muted);
+        font-weight: 500;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+          background-color: rgba(229, 57, 53, 0.1);
+          color: var(--color-subtle);
+        }
+
+        &.active {
+          background-color: var(--color-primary);
+          color: var(--color-subtle);
+        }
+      }
+
+      .logout-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--color-muted); // สีเทานวล
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.3s, color 0.3s;
+
+        &:hover {
+          background-color: rgba(229, 57, 53, 0.1); // แดงโปร่ง
+          color: #ffffff;
+        }
+      }
+    }
+  }
+}

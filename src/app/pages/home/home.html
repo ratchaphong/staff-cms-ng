@@ -1,0 +1,81 @@
+<div class="home-container">
+  <app-sidebar />
+
+  <div class="content">
+    <h2>หน้าดูแลสมาชิก</h2>
+
+    <form (ngSubmit)="onSearch()" class="search-form">
+      <input
+        type="text"
+        [(ngModel)]="query.name"
+        name="name"
+        placeholder="ค้นหาชื่อ"
+      />
+      <input
+        type="email"
+        [(ngModel)]="query.email"
+        name="email"
+        placeholder="ค้นหาอีเมล"
+      />
+      <input
+        type="text"
+        [(ngModel)]="query.phoneNumber"
+        name="phoneNumber"
+        placeholder="ค้นหาเบอร์โทร"
+      />
+      <button type="submit">ค้นหา</button>
+    </form>
+
+    <div *ngIf="loading">กำลังโหลดข้อมูล...</div>
+    <div *ngIf="error">{{ error }}</div>
+
+    <table *ngIf="!loading && users.length > 0" class="user-table">
+      <thead>
+        <tr>
+          <th>ชื่อ</th>
+          <th>อีเมล</th>
+          <th>เบอร์โทร</th>
+          <th>บทบาท</th>
+          <th>การจัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.phoneNumber || '-' }}</td>
+          <td>{{ user.role }}</td>
+          <td class="actions">
+            <button (click)="openEditModal(user)">แก้ไข</button>
+            <button (click)="confirmDelete(user.id)">ลบ</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && users.length > 0" class="pagination">
+      <button (click)="goToPreviousPage()" [disabled]="query.page === 1">
+        ก่อนหน้า
+      </button>
+
+      <span>หน้า {{ query.page }}</span>
+
+      <button
+        (click)="goToNextPage()"
+        [disabled]="users.length < query.perPage"
+      >
+        ถัดไป
+      </button>
+    </div>
+
+    <div *ngIf="!loading && users.length === 0">ไม่พบข้อมูล</div>
+
+    <!-- Modal แก้ไข -->
+    <app-edit-user-modal
+      *ngIf="isEditModalVisible && !!selectedUser"
+      [user]="selectedUser"
+      (save)="updateUser($event)"
+      (cancel)="isEditModalVisible = false"
+    />
+  </div>
+</div>

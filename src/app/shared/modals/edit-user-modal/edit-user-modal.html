@@ -1,0 +1,41 @@
+<div class="modal-backdrop">
+  <div class="modal">
+    <h3>แก้ไขข้อมูลผู้ใช้</h3>
+
+    <form (ngSubmit)="onSave()" *ngIf="editedUser">
+      <label>
+        ชื่อ:
+        <input type="text" [(ngModel)]="editedUser.name" name="name" />
+      </label>
+      <label>
+        อีเมล:
+        <input
+          type="email"
+          [(ngModel)]="editedUser.email"
+          name="email"
+          disabled
+        />
+      </label>
+      <label>
+        เบอร์โทร:
+        <input
+          type="text"
+          [(ngModel)]="editedUser.phoneNumber"
+          name="phoneNumber"
+        />
+      </label>
+      <label>
+        บทบาท:
+        <select [(ngModel)]="editedUser.role" name="role">
+          <option value="USER">USER</option>
+          <option value="STAFF">STAFF</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button type="submit">บันทึก</button>
+        <button type="button" (click)="onCancel()">ยกเลิก</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="auth-container">
+  <div class="auth-form">
+    <h2>{{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}</h2>
+    <form (ngSubmit)="onSubmit(form)" #form="ngForm">
+      <input
+        *ngIf="!isLoginMode"
+        [(ngModel)]="name"
+        name="name"
+        placeholder="ชื่อ-นามสกุล"
+        required
+      />
+      <input [(ngModel)]="email" name="email" placeholder="อีเมล" required />
+      <input
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        placeholder="รหัสผ่าน"
+        required
+      />
+      <button type="submit">
+        {{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}
+      </button>
+    </form>
+    <u (click)="toggleMode(form)" class="switch-link">
+      {{ isLoginMode ? 'ยังไม่มีบัญชีใช่ไหม? ลงทะเบียน' : 'มีบัญชีอยู่แล้ว?
+      เข้าสู่ระบบ' }}
+    </u>
+  </div>
+</div>
