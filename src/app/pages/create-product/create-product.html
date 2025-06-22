@@ -1,0 +1,36 @@
+<div class="home-container">
+  <app-sidebar />
+  <div class="content">
+    <h2>เพิ่มผลิตภัณฑ์ใหม่</h2>
+
+    <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="form">
+      <label>ชื่อสินค้า</label>
+      <input type="text" [(ngModel)]="form.name" name="name" required />
+
+      <label>รายละเอียด</label>
+      <textarea
+        [(ngModel)]="form.description"
+        name="description"
+        required
+      ></textarea>
+
+      <label>ราคา</label>
+      <input type="number" [(ngModel)]="form.price" name="price" required />
+
+      <label>สถานะ</label>
+      <select [(ngModel)]="form.status" name="status" required>
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+      </select>
+
+      <!-- <label>ลิงก์รูปภาพ</label>
+      <input type="text" [(ngModel)]="form.image" name="image" /> -->
+      <label>รูปภาพ</label>
+      <input type="file" (change)="onFileChange($event)" accept="image/*" />
+      <img *ngIf="imagePreview" [src]="imagePreview" width="120" />
+      <button type="submit">บันทึก</button>
+    </form>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+  </div>
+</div>

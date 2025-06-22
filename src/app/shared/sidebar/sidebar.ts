@@ -15,7 +15,8 @@ export class Sidebar {
   private authService = inject(AuthService);
 
   links = [
-    { path: '/home', label: 'หน้าดูแลสมาชิก' },
+    { path: '/home', label: 'จัดการสมาชิก' },
+    { path: '/product', label: 'จัดการผลิตภัณฑ์' },
     { path: '/profile', label: 'ดูโปรไฟล์' },
   ];
 

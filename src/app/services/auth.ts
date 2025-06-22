@@ -30,6 +30,10 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/register`, payload);
   }
 
+  createAdmin(payload: RegisterPayload): Observable<any> {
+    return this.http.post(`${this.baseUrl}/create-admin`, payload);
+  }
+
   getProfile(): Observable<any> {
     const token = this.getToken();
     const headers = new HttpHeaders({

@@ -1,25 +1,20 @@
-// src/app/services/user.service.ts
+// src/app/pages/product/product.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
-import { UserQuery, User } from './user.interface';
-import { isBrowser } from '../utils/browser.utils'; // ถ้ามีตัวช่วยแยกฝั่ง browser
+import { Product } from './product.interface';
+import { isBrowser } from '../utils/browser.utils';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService {
-  private baseUrl = 'https://user-m-service.onrender.com/users'; // ✅ ใช้ endpoint ที่ถูกต้อง
+export class ProductService {
+  private baseUrl = 'https://pd-m-service.onrender.com';
 
   constructor(private http: HttpClient) {}
 
-  getUsers(query: UserQuery): Observable<User[]> {
+  getProducts(): Observable<Product[]> {
     let params = new HttpParams();
-    Object.entries(query).forEach(([key, val]) => {
-      if (val !== undefined && val !== null && val !== '') {
-        params = params.set(key, val.toString());
-      }
-    });
 
     const token = isBrowser() ? localStorage.getItem('access_token') : null;
 
@@ -28,7 +23,7 @@ export class UserService {
     });
 
     return this.http
-      .get<User[]>(this.baseUrl + '/search', { params, headers })
+      .get<Product[]>(this.baseUrl + '/products', { params, headers })
       .pipe(
         catchError((err) => {
           console.error('❌ API error', err);
@@ -37,7 +32,44 @@ export class UserService {
       );
   }
 
-  updateUserProfile(userId: string, updated: Partial<User>): Observable<User> {
+  getProductById(id: string): Observable<Product> {
+    let params = new HttpParams();
+
+    const token = isBrowser() ? localStorage.getItem('access_token') : null;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token || ''}`,
+    });
+
+    return this.http
+      .get<Product>(this.baseUrl + `/products/${id}`, { params, headers })
+      .pipe(
+        catchError((err) => {
+          console.error('❌ API error', err);
+          throw err;
+        })
+      );
+  }
+
+  createProduct(product: Partial<Product>): Observable<Product> {
+    const token = isBrowser() ? localStorage.getItem('access_token') : null;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token || ''}`,
+      'Content-Type': 'application/json',
+    });
+
+    return this.http
+      .post<Product>(this.baseUrl + '/products', product, { headers })
+      .pipe(
+        catchError((err) => {
+          console.error('❌ API error', err);
+          throw err;
+        })
+      );
+  }
+
+  updateProduct(id: string, data: Partial<Product>): Observable<Product> {
     const token = isBrowser() ? localStorage.getItem('access_token') : null;
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token || ''}`,
@@ -45,50 +77,10 @@ export class UserService {
     });
 
     return this.http
-      .patch<User>(this.baseUrl + `/${userId}/profile`, updated, { headers })
+      .patch<Product>(`${this.baseUrl}/products/${id}`, data, { headers })
       .pipe(
         catchError((err) => {
-          console.error('❌ Error updating user', err);
-          throw err;
-        })
-      );
-  }
-
-  updateUserRole(
-    userId: string,
-    role: 'USER' | 'STAFF' | 'ADMIN'
-  ): Observable<void> {
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-      'Content-Type': 'application/json',
-    });
-
-    return this.http
-      .patch<void>(this.baseUrl + `/${userId}/role`, { role }, { headers })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ Error updating user role', err);
-          throw err;
-        })
-      );
-  }
-
-  deleteUser(userId: string): Observable<void> {
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-    });
-
-    return this.http
-      .delete<void>(this.baseUrl + `/${userId}`, {
-        headers,
-      })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ Delete error', err);
+          console.error('❌ Update error', err);
           throw err;
         })
       );

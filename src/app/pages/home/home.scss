@@ -63,19 +63,19 @@
         border: 1px solid #dc3545;
 
         &:hover {
-          color: #a71d2a;
-          border: 1px solid #a71d2a;
+          background-color: #dc3545;
+          color: white;
         }
       }
 
-      &:last-child {
-        background-color: #dc3545;
-        color: white;
+      // &:last-child {
+      //   background-color: #dc3545;
+      //   color: white;
 
-        &:hover {
-          background-color: #a71d2a;
-        }
-      }
+      //   &:hover {
+      //     background-color: #a71d2a;
+      //   }
+      // }
     }
   }
 }

@@ -40,7 +40,7 @@ export class Auth {
         });
     } else {
       this.authService
-        .register({
+        .createAdmin({
           name: this.name,
           email: this.email,
           password: this.password,

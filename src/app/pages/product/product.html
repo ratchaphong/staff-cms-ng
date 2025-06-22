@@ -1,0 +1,38 @@
+<div class="home-container">
+  <app-sidebar />
+
+  <div class="content">
+    <h2>จัดการผลิตภัณฑ์</h2>
+
+    <!-- ปุ่มเพิ่มสินค้าใหม่ -->
+    <div class="action-bar">
+      <button class="create-btn" (click)="goToCreate()">เพิ่มสินค้าใหม่</button>
+    </div>
+
+    <div *ngIf="loading">กำลังโหลดข้อมูล...</div>
+    <div *ngIf="error">{{ error }}</div>
+
+    <table *ngIf="!loading && products.length > 0" class="product-table">
+      <thead>
+        <tr>
+          <th>ชื่อสินค้า</th>
+          <th>ราคา</th>
+          <th>สถานะ</th>
+          <th>การจัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.name }}</td>
+          <td>{{ product.price | number }}</td>
+          <td>{{ product.status }}</td>
+          <td class="actions">
+            <button (click)="goToDetail(product.id)">แก้ไข</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && products.length === 0">ไม่พบข้อมูลสินค้า</div>
+  </div>
+</div>
