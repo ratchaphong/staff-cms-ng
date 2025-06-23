@@ -89,4 +89,19 @@ export class EditProduct implements OnInit {
 
     reader.readAsDataURL(file);
   }
+
+  onDelete(): void {
+    const confirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?');
+    if (!confirmed) return;
+
+    this.productService.deleteProduct(this.productId).subscribe({
+      next: () => {
+        this.router.navigate(['/product']);
+      },
+      error: (err) => {
+        this.error = 'ไม่สามารถลบสินค้าได้';
+        console.error(err);
+      },
+    });
+  }
 }

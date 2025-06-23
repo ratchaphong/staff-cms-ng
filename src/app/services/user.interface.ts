@@ -11,7 +11,7 @@ export interface User {
   address: string;
   deletedAt: string | null;
   isDeleted: boolean;
-  role: 'USER' | 'ADMIN'; // หรือ string ถ้ามีหลายค่า
+  role: 'USER' | 'ADMIN' | 'STAFF'; // หรือ string ถ้ามีหลายค่า
 }
 
 export interface UserQuery {

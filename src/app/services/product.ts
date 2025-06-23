@@ -85,4 +85,20 @@ export class ProductService {
         })
       );
   }
+
+  deleteProduct(id: string): Observable<void> {
+    const token = isBrowser() ? localStorage.getItem('access_token') : null;
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token || ''}`,
+    });
+
+    return this.http
+      .delete<void>(`${this.baseUrl}/products/${id}`, { headers })
+      .pipe(
+        catchError((err) => {
+          console.error('❌ Delete error', err);
+          throw err;
+        })
+      );
+  }
 }

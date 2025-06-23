@@ -5,6 +5,7 @@ import { Sidebar } from '../../shared/sidebar/sidebar';
 import { User, UserQuery } from '../../services/user.interface';
 import { UserService } from '../../services/user';
 import { EditUserModal } from '../../shared/modals/edit-user-modal/edit-user-modal';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ import { EditUserModal } from '../../shared/modals/edit-user-modal/edit-user-mod
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
+  profile: User | null = null; // ✅ เก็บข้อมูลโปรไฟล์ของตัวเอง
   users: User[] = [];
   query: UserQuery = {
     name: '',
@@ -32,28 +34,41 @@ export class Home implements OnInit {
 
   constructor(
     private userService: UserService,
+    private authService: AuthService, // ✅ เพิ่ม
     private cdr: ChangeDetectorRef // ✅ เพิ่ม
   ) {}
 
   ngOnInit(): void {
-    this.fetchUsers();
+    this.authService.getProfile().subscribe({
+      next: (profile) => {
+        this.profile = profile;
+        this.fetchUsers();
+      },
+      error: () => {
+        this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
+      },
+    });
   }
 
   fetchUsers(): void {
     this.loading = true;
     this.error = '';
-    this.cdr.detectChanges(); // ✅ แจ้งให้ UI รู้ว่า loading = true แล้ว
+    this.cdr.detectChanges();
 
     this.userService.getUsers(this.query).subscribe({
       next: (data) => {
-        this.users = data;
+        // ✅ กรอง user ที่ไม่ใช่ตัวเอง
+        this.users = this.profile
+          ? data.filter((u) => u.id !== this.profile?.id)
+          : data;
+
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ รีเฟรช view หลังโหลดเสร็จ
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้';
         this.loading = false;
-        this.cdr.detectChanges(); // ✅ อัปเดต error และสถานะ
+        this.cdr.detectChanges();
       },
     });
   }
@@ -127,5 +142,9 @@ export class Home implements OnInit {
         },
       });
     }
+  }
+
+  canManageUsers(): boolean {
+    return this.profile?.role === 'STAFF' || this.profile?.role === 'ADMIN';
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { isBrowser } from '../utils/browser.utils'; // 👈 นำเข้า
-import { LoginPayload, RegisterPayload } from './auth.interface';
+import { LoginPayload, RegisterPayload, UserProfile } from './auth.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -34,13 +34,13 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/create-admin`, payload);
   }
 
-  getProfile(): Observable<any> {
+  getProfile(): Observable<UserProfile> {
     const token = this.getToken();
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get(`${this.baseUrl}/profile`, { headers });
+    return this.http.get<UserProfile>(`${this.baseUrl}/profile`, { headers });
   }
 
   getToken(): string | null {

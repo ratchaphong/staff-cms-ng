@@ -36,7 +36,7 @@
           <th>อีเมล</th>
           <th>เบอร์โทร</th>
           <th>บทบาท</th>
-          <th>การจัดการ</th>
+          <th *ngIf="canManageUsers()">การจัดการ</th>
         </tr>
       </thead>
       <tbody>
@@ -45,7 +45,7 @@
           <td>{{ user.email }}</td>
           <td>{{ user.phoneNumber || '-' }}</td>
           <td>{{ user.role }}</td>
-          <td class="actions">
+          <td *ngIf="canManageUsers()" class="actions">
             <button (click)="openEditModal(user)">แก้ไข</button>
             <button (click)="confirmDelete(user.id)">ลบ</button>
           </td>
