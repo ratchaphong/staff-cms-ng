@@ -6,11 +6,12 @@ import { User, UserQuery } from '../../services/user.interface';
 import { UserService } from '../../services/user';
 import { EditUserModal } from '../../shared/modals/edit-user-modal/edit-user-modal';
 import { AuthService } from '../../services/auth';
+import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, Sidebar, EditUserModal],
+  imports: [CommonModule, FormsModule, Sidebar, EditUserModal, LoadingOverlay],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -39,6 +40,9 @@ export class Home implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
+    this.cdr.detectChanges();
+
     this.authService.getProfile().subscribe({
       next: (profile) => {
         this.profile = profile;

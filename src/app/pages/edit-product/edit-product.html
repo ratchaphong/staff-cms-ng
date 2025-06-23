@@ -5,20 +5,38 @@
 
     <form (ngSubmit)="onSubmit()" #productForm="ngForm" class="form">
       <label>ชื่อสินค้า</label>
-      <input type="text" [(ngModel)]="form.name" name="name" required />
+      <input
+        type="text"
+        [(ngModel)]="form.name"
+        name="name"
+        required
+        [disabled]="!canManageProducts()"
+      />
 
       <label>รายละเอียด</label>
       <textarea
         [(ngModel)]="form.description"
         name="description"
         required
+        [disabled]="!canManageProducts()"
       ></textarea>
 
       <label>ราคา</label>
-      <input type="number" [(ngModel)]="form.price" name="price" required />
+      <input
+        type="number"
+        [(ngModel)]="form.price"
+        name="price"
+        required
+        [disabled]="!canManageProducts()"
+      />
 
       <label>สถานะ</label>
-      <select [(ngModel)]="form.status" name="status" required>
+      <select
+        [(ngModel)]="form.status"
+        name="status"
+        required
+        [disabled]="!canManageProducts()"
+      >
         <option value="ACTIVE">ACTIVE</option>
         <option value="INACTIVE">INACTIVE</option>
       </select>
@@ -26,10 +44,15 @@
       <!-- <label>ลิงก์รูปภาพ</label>
       <input type="text" [(ngModel)]="form.image" name="image" /> -->
       <label>รูปภาพ</label>
-      <input type="file" (change)="onFileChange($event)" accept="image/*" />
+      <input
+        type="file"
+        (change)="onFileChange($event)"
+        accept="image/*"
+        [disabled]="!canManageProducts()"
+      />
       <img *ngIf="imagePreview" [src]="imagePreview" width="120" />
 
-      <div class="button-row">
+      <div *ngIf="canManageProducts()" class="button-row">
         <button type="submit">บันทึก</button>
         <button type="button" (click)="onDelete()" class="cancel-btn">
           ลบ

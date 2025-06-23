@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { AuthService } from '../../services/auth';
+import { User } from '../../services/user.interface';
 
 @Component({
   selector: 'app-edit-product',
@@ -22,6 +24,7 @@ export class EditProduct implements OnInit {
     image: '',
   };
   imagePreview: SafeUrl | null = null;
+  profile: User | null = null;
 
   error = '';
   productId = '';
@@ -29,6 +32,7 @@ export class EditProduct implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
+    private authService: AuthService,
     private router: Router,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef // ✅ เพิ่มตรงนี้
@@ -37,19 +41,28 @@ export class EditProduct implements OnInit {
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id') ?? '';
     if (this.productId) {
-      this.productService.getProductById(this.productId).subscribe({
-        next: (data) => {
-          this.form = {
-            name: data.name,
-            description: data.description,
-            price: data.price,
-            status: data.status,
-            image: data.image,
-          };
-          this.imagePreview = data.image;
+      this.authService.getProfile().subscribe({
+        next: (profile) => {
+          this.profile = profile;
+          this.productService.getProductById(this.productId).subscribe({
+            next: (data) => {
+              this.form = {
+                name: data.name,
+                description: data.description,
+                price: data.price,
+                status: data.status,
+                image: data.image,
+              };
+              this.imagePreview = data.image;
+              this.cdr.detectChanges(); // ✅ เพื่อให้ UI ทันรู้ว่ามี profile แล้ว
+            },
+            error: () => {
+              this.error = 'ไม่พบสินค้านี้';
+            },
+          });
         },
         error: () => {
-          this.error = 'ไม่พบสินค้านี้';
+          this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
         },
       });
     }
@@ -103,5 +116,9 @@ export class EditProduct implements OnInit {
         console.error(err);
       },
     });
+  }
+
+  canManageProducts(): boolean {
+    return this.profile?.role === 'STAFF' || this.profile?.role === 'ADMIN';
   }
 }

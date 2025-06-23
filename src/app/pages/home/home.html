@@ -1,5 +1,6 @@
 <div class="home-container">
   <app-sidebar />
+  <app-loading-overlay [visible]="loading" />
 
   <div class="content">
     <h2>จัดการสมาชิก</h2>
@@ -26,7 +27,7 @@
       <button type="submit">ค้นหา</button>
     </form>
 
-    <div *ngIf="loading">กำลังโหลดข้อมูล...</div>
+    <!-- <div *ngIf="loading">กำลังโหลดข้อมูล...</div> -->
     <div *ngIf="error">{{ error }}</div>
 
     <table *ngIf="!loading && users.length > 0" class="user-table">

@@ -1,4 +1,5 @@
 <div class="auth-container">
+  <app-loading-overlay [visible]="loading" />
   <div class="auth-form">
     <h2>{{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}</h2>
     <form (ngSubmit)="onSubmit(form)" #form="ngForm">

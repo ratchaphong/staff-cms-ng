@@ -1,15 +1,16 @@
 <div class="home-container">
   <app-sidebar />
+  <app-loading-overlay [visible]="loading" />
 
   <div class="content">
     <h2>จัดการผลิตภัณฑ์</h2>
 
     <!-- ปุ่มเพิ่มสินค้าใหม่ -->
-    <div class="action-bar">
+    <div *ngIf="canManageProducts()" class="action-bar">
       <button class="create-btn" (click)="goToCreate()">เพิ่มสินค้าใหม่</button>
     </div>
 
-    <div *ngIf="loading">กำลังโหลดข้อมูล...</div>
+    <!-- <div *ngIf="loading">กำลังโหลดข้อมูล...</div> -->
     <div *ngIf="error">{{ error }}</div>
 
     <table *ngIf="!loading && products.length > 0" class="product-table">
@@ -27,7 +28,9 @@
           <td>{{ product.price | number }}</td>
           <td>{{ product.status }}</td>
           <td class="actions">
-            <button (click)="goToDetail(product.id)">แก้ไข</button>
+            <button (click)="goToDetail(product.id)">
+              {{ canManageProducts() ? 'แก้ไข' : 'ดูรายละเอียด' }}
+            </button>
           </td>
         </tr>
       </tbody>

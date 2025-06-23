@@ -23,7 +23,7 @@ export class ProductService {
     });
 
     return this.http
-      .get<Product[]>(this.baseUrl + '/products', { params, headers })
+      .get<Product[]>(this.baseUrl + '/products/search', { params, headers })
       .pipe(
         catchError((err) => {
           console.error('❌ API error', err);

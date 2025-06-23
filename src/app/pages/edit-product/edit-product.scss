@@ -33,29 +33,6 @@
     color: var(--color-text);
   }
 
-  input,
-  textarea,
-  select {
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    background-color: var(--color-subtle);
-    color: var(--color-text);
-    transition: border-color 0.3s ease;
-
-    &:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      background-color: #fff;
-    }
-  }
-
-  textarea {
-    min-height: 120px;
-    resize: vertical;
-  }
-
   // button {
   //   width: fit-content;
   //   background-color: var(--color-primary);
