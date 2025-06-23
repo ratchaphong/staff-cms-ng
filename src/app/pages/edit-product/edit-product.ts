@@ -46,6 +46,7 @@ export class EditProduct implements OnInit {
             status: data.status,
             image: data.image,
           };
+          this.imagePreview = data.image;
         },
         error: () => {
           this.error = 'ไม่พบสินค้านี้';

@@ -17,10 +17,10 @@ export const routes: Routes = [
     component: CreateProduct,
     canActivate: [authGuard],
   },
-  // {
-  //   path: 'product/:id',
-  //   component: EditProduct,
-  //   canActivate: [authGuard],
-  // },
+  {
+    path: 'product/:id',
+    component: EditProduct,
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: '' },
 ];
