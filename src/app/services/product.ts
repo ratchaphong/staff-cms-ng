@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { Product } from './product.interface';
-import { isBrowser } from '../utils/browser.utils';
+import { isBrowser } from '../utils/helpers';
 
 @Injectable({
   providedIn: 'root',

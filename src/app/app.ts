@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { DeviceBlocker } from './shared/device-blocker/device-blocker';
 import { AuthService } from './services/auth';
 import { Title } from '@angular/platform-browser';
+import { getToken, getTokenTime, clearToken } from './utils/helpers';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,6 @@ import { Title } from '@angular/platform-browser';
   styleUrl: './app.scss',
 })
 export class App {
-  private authService = inject(AuthService);
   private titleService = inject(Title); // ✅ Inject Title service
 
   ngOnInit(): void {
@@ -26,14 +26,14 @@ export class App {
   }
 
   private checkTokenExpiration() {
-    const token = this.authService.getToken();
-    const tokenTime = this.authService.getTokenTime();
+    const token = getToken();
+    const tokenTime = getTokenTime();
     const oneHour = 60 * 60 * 1000;
 
     if (token && tokenTime) {
       const age = Date.now() - parseInt(tokenTime, 10);
       if (age > oneHour) {
-        this.authService.clearToken();
+        clearToken();
       }
     }
   }

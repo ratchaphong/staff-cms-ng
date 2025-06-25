@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../services/auth';
+import { clearToken } from '../../utils/helpers';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +12,6 @@ import { AuthService } from '../../services/auth';
 })
 export class Sidebar {
   private router = inject(Router);
-  private authService = inject(AuthService);
 
   links = [
     { path: '/home', label: 'จัดการสมาชิก' },
@@ -21,7 +20,7 @@ export class Sidebar {
   ];
 
   logout() {
-    this.authService.clearToken();
+    clearToken();
     this.router.navigate(['/']);
   }
 }

@@ -1,15 +1,21 @@
+// ✅ auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { isBrowser } from '../utils/browser.utils'; // 👈 นำเข้า
 import { LoginPayload, RegisterPayload, UserProfile } from './auth.interface';
+import {
+  clearToken,
+  getToken,
+  getTokenTime,
+  isBrowser,
+  setAccessToken,
+} from '../utils/helpers';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private baseUrl = 'https://user-m-service.onrender.com/users';
-  private readonly TOKEN_KEY = 'access_token';
 
   constructor(private http: HttpClient) {}
 
@@ -18,9 +24,8 @@ export class AuthService {
       .post<{ access_token: string }>(`${this.baseUrl}/login`, payload)
       .pipe(
         tap((res) => {
-          if (isBrowser() && res?.access_token) {
-            localStorage.setItem(this.TOKEN_KEY, res.access_token);
-            localStorage.setItem('token_time', `${Date.now()}`);
+          if (res?.access_token) {
+            setAccessToken(res.access_token);
           }
         })
       );
@@ -35,36 +40,13 @@ export class AuthService {
   }
 
   getProfile(): Observable<UserProfile> {
-    const token = this.getToken();
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.get<UserProfile>(`${this.baseUrl}/profile`, { headers });
-  }
-
-  getToken(): string | null {
-    if (!isBrowser()) return null;
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  getTokenTime(): string | null {
-    if (!isBrowser()) return null;
-    return localStorage.getItem('token_time');
-  }
-
-  clearToken() {
-    if (isBrowser()) {
-      localStorage.removeItem(this.TOKEN_KEY);
-      localStorage.removeItem('token_time');
-    }
+    return this.http.get<UserProfile>(`${this.baseUrl}/profile`);
   }
 
   isLoggedIn(): boolean {
     if (!isBrowser()) return false;
-
-    const token = this.getToken();
-    const tokenTime = localStorage.getItem('token_time');
+    const token = getToken();
+    const tokenTime = getTokenTime();
     if (!token || !tokenTime) return false;
 
     const now = Date.now();
@@ -72,10 +54,9 @@ export class AuthService {
     const oneHour = 60 * 60 * 1000;
 
     if (diff > oneHour) {
-      this.clearToken();
+      clearToken();
       return false;
     }
-
     return true;
   }
 }

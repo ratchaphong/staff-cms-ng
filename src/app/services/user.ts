@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, Observable } from 'rxjs';
 import { UserQuery, User } from './user.interface';
-import { isBrowser } from '../utils/browser.utils'; // ถ้ามีตัวช่วยแยกฝั่ง browser
+import { isBrowser } from '../utils/helpers'; // ถ้ามีตัวช่วยแยกฝั่ง browser
 
 @Injectable({
   providedIn: 'root',
