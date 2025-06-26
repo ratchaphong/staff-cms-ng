@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { AuthStore } from '../../../store/auth';
 import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
 import { CommonModule } from '@angular/common';
+import { AuthStore } from '../../store/auth';
 
 @Component({
   selector: 'app-auth',

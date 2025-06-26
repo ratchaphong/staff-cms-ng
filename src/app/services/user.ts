@@ -1,96 +1,62 @@
-// src/app/services/user.service.ts
+// ✅ user.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, Observable } from 'rxjs';
-import { UserQuery, User } from './user.interface';
-import { isBrowser } from '../utils/helpers'; // ถ้ามีตัวช่วยแยกฝั่ง browser
+import { HttpClient } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { User, UserQuery } from './user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private baseUrl = 'https://user-m-service.onrender.com/users'; // ✅ ใช้ endpoint ที่ถูกต้อง
+  private baseUrl = 'https://user-m-service.onrender.com/users';
 
   constructor(private http: HttpClient) {}
 
   getUsers(query: UserQuery): Observable<User[]> {
-    let params = new HttpParams();
-    Object.entries(query).forEach(([key, val]) => {
-      if (val !== undefined && val !== null && val !== '') {
-        params = params.set(key, val.toString());
-      }
-    });
-
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-    });
-
     return this.http
-      .get<User[]>(this.baseUrl + '/search', { params, headers })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ API error', err);
-          throw err;
-        })
-      );
+      .get<User[]>(`${this.baseUrl}/search`, {
+        params: this.objectToParams(query),
+      })
+      .pipe(catchError(this.handleError));
   }
 
   updateUserProfile(userId: string, updated: Partial<User>): Observable<User> {
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-      'Content-Type': 'application/json',
-    });
-
     return this.http
-      .patch<User>(this.baseUrl + `/${userId}/profile`, updated, { headers })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ Error updating user', err);
-          throw err;
-        })
-      );
+      .patch<User>(`${this.baseUrl}/${userId}/profile`, updated)
+      .pipe(catchError(this.handleError));
   }
 
   updateUserRole(
     userId: string,
     role: 'USER' | 'STAFF' | 'ADMIN'
   ): Observable<void> {
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-      'Content-Type': 'application/json',
-    });
-
     return this.http
-      .patch<void>(this.baseUrl + `/${userId}/role`, { role }, { headers })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ Error updating user role', err);
-          throw err;
-        })
-      );
+      .patch<void>(`${this.baseUrl}/${userId}/role`, { role })
+      .pipe(catchError(this.handleError));
   }
 
   deleteUser(userId: string): Observable<void> {
-    const token = isBrowser() ? localStorage.getItem('access_token') : null;
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token || ''}`,
-    });
-
     return this.http
-      .delete<void>(this.baseUrl + `/${userId}`, {
-        headers,
-      })
-      .pipe(
-        catchError((err) => {
-          console.error('❌ Delete error', err);
-          throw err;
-        })
-      );
+      .delete<void>(`${this.baseUrl}/${userId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  private objectToParams(query: Record<string, any>): any {
+    const params: Record<string, string> = {};
+    for (const key in query) {
+      if (
+        query[key] !== undefined &&
+        query[key] !== null &&
+        query[key] !== ''
+      ) {
+        params[key] = query[key].toString();
+      }
+    }
+    return params;
+  }
+
+  private handleError(err: any) {
+    console.error('❌ user.service.ts error:', err);
+    return throwError(() => err);
   }
 }

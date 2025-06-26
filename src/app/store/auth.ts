@@ -1,11 +1,11 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { AuthService } from '../app/services/auth';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../services/auth';
 import {
+  UserProfile,
   LoginPayload,
   RegisterPayload,
-  UserProfile,
-} from '../app/services/auth.interface';
-import { firstValueFrom } from 'rxjs';
+} from '../services/auth.interface';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
