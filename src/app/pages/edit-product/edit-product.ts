@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product';
-import { Product } from '../../services/product.interface';
+import { UpdateProductPayload } from '../../services/product.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../shared/sidebar/sidebar';
@@ -16,7 +16,7 @@ import { User } from '../../services/user.interface';
   styleUrl: './edit-product.scss',
 })
 export class EditProduct implements OnInit {
-  form: Partial<Product> = {
+  form: UpdateProductPayload = {
     name: '',
     description: '',
     price: 0,

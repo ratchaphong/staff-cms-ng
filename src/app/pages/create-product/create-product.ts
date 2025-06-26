@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { ProductService } from '../../services/product';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Sidebar } from '../../shared/sidebar/sidebar';
-import { Product } from '../../services/product.interface';
+import { CreateProductPayload } from '../../services/product.interface';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ProductStore } from '../../store/product';
 
 @Component({
   selector: 'app-create-product',
@@ -15,33 +15,30 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrl: './create-product.scss',
 })
 export class CreateProduct {
-  form: Partial<Product> = {
+  private productStore = inject(ProductStore);
+  private router = inject(Router);
+  private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
+
+  form: CreateProductPayload = {
     name: '',
     description: '',
     price: 0,
     status: 'ACTIVE',
     image: '',
   };
+
   imagePreview: SafeUrl | null = null;
-
   error = '';
-  constructor(
-    private productService: ProductService,
-    private router: Router,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef // ✅ เพิ่มตรงนี้
-  ) {}
 
-  onSubmit(): void {
-    this.productService.createProduct(this.form).subscribe({
-      next: () => {
-        this.router.navigate(['/product']);
-      },
-      error: (err) => {
-        this.error = 'เกิดข้อผิดพลาดในการสร้างผลิตภัณฑ์';
-        console.error(err);
-      },
-    });
+  async onSubmit(): Promise<void> {
+    try {
+      await this.productStore.createProduct(this.form);
+      this.router.navigate(['/product']);
+    } catch (err) {
+      this.error = 'เกิดข้อผิดพลาดในการสร้างผลิตภัณฑ์';
+      console.error(err);
+    }
   }
 
   onFileChange(event: Event): void {
@@ -53,10 +50,9 @@ export class CreateProduct {
 
     reader.onload = () => {
       const base64 = reader.result as string;
-      this.form.image = base64; // แปลงเป็น base64 string
-      this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(base64); // ✅
-      console.log('👀 this.cdr =', this.cdr); // ถ้าเป็น undefined ที่นี่จะรู้เลย
-      this.cdr.detectChanges(); // ✅ บังคับ Angular อัปเดต UI
+      this.form.image = base64;
+      this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(base64);
+      this.cdr.detectChanges();
     };
 
     reader.readAsDataURL(file);

@@ -2,26 +2,56 @@
   <app-loading-overlay [visible]="loading" />
   <div class="auth-form">
     <h2>{{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}</h2>
+
     <form (ngSubmit)="onSubmit(form)" #form="ngForm">
+      <!-- 👤 เฉพาะตอนสมัคร -->
       <input
         *ngIf="!isLoginMode"
-        [(ngModel)]="name"
+        [(ngModel)]="registerForm.name"
         name="name"
         placeholder="ชื่อ-นามสกุล"
         required
       />
-      <input [(ngModel)]="email" name="email" placeholder="อีเมล" required />
+
+      <!-- 📧 Email -->
       <input
-        [(ngModel)]="password"
-        name="password"
+        *ngIf="isLoginMode"
+        [(ngModel)]="loginForm.email"
+        name="loginEmail"
+        placeholder="อีเมล"
+        required
+      />
+      <input
+        *ngIf="!isLoginMode"
+        [(ngModel)]="registerForm.email"
+        name="registerEmail"
+        placeholder="อีเมล"
+        required
+      />
+
+      <!-- 🔐 Password -->
+      <input
+        *ngIf="isLoginMode"
+        [(ngModel)]="loginForm.password"
+        name="loginPassword"
         type="password"
         placeholder="รหัสผ่าน"
         required
       />
+      <input
+        *ngIf="!isLoginMode"
+        [(ngModel)]="registerForm.password"
+        name="registerPassword"
+        type="password"
+        placeholder="รหัสผ่าน"
+        required
+      />
+
       <button type="submit">
         {{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}
       </button>
     </form>
+
     <u (click)="toggleMode(form)" class="switch-link">
       {{ isLoginMode ? 'ยังไม่มีบัญชีใช่ไหม? ลงทะเบียน' : 'มีบัญชีอยู่แล้ว?
       เข้าสู่ระบบ' }}

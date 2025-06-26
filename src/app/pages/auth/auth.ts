@@ -1,9 +1,11 @@
+// ✅ auth.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '../../store/auth';
+import { LoginPayload, RegisterPayload } from '../../services/auth.interface';
 
 @Component({
   selector: 'app-auth',
@@ -14,9 +16,17 @@ import { AuthStore } from '../../store/auth';
 })
 export class Auth {
   isLoginMode = true;
-  email = '';
-  password = '';
-  name = '';
+
+  loginForm: LoginPayload = {
+    email: '',
+    password: '',
+  };
+
+  registerForm: RegisterPayload = {
+    name: '',
+    email: '',
+    password: '',
+  };
 
   constructor(private router: Router, private authStore: AuthStore) {}
 
@@ -28,31 +38,22 @@ export class Auth {
   async onSubmit(form: NgForm) {
     try {
       if (this.isLoginMode) {
-        await this.authStore.login({
-          email: this.email,
-          password: this.password,
-        });
+        await this.authStore.login(this.loginForm);
         this.router.navigate(['/home']);
       } else {
-        await this.authStore.register({
-          name: this.name,
-          email: this.email,
-          password: this.password,
-        });
+        await this.authStore.register(this.registerForm);
         alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
         this.isLoginMode = true;
         this.resetForm(form);
       }
     } catch (err) {
       alert('เกิดข้อผิดพลาด โปรดลองใหม่');
-    } finally {
     }
   }
 
   private resetForm(form: NgForm) {
-    this.name = '';
-    this.email = '';
-    this.password = '';
+    this.loginForm = { email: '', password: '' };
+    this.registerForm = { name: '', email: '', password: '' };
     form.resetForm();
   }
 

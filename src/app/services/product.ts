@@ -2,7 +2,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Product } from './product.interface';
+import {
+  CreateProductPayload,
+  Product,
+  UpdateProductPayload,
+} from './product.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -22,13 +26,13 @@ export class ProductService {
       .pipe(catchError(this.handleError('getProductById')));
   }
 
-  createProduct(product: Partial<Product>): Observable<Product> {
+  createProduct(product: CreateProductPayload): Observable<Product> {
     return this.http
       .post<Product>(`${this.baseUrl}/products`, product)
       .pipe(catchError(this.handleError('createProduct')));
   }
 
-  updateProduct(id: string, data: Partial<Product>): Observable<Product> {
+  updateProduct(id: string, data: UpdateProductPayload): Observable<Product> {
     return this.http
       .patch<Product>(`${this.baseUrl}/products/${id}`, data)
       .pipe(catchError(this.handleError('updateProduct')));

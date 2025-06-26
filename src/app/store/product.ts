@@ -1,7 +1,7 @@
 // ✅ product.store.ts
 import { Injectable, computed, signal } from '@angular/core';
 import { ProductService } from '../services/product';
-import { Product } from '../services/product.interface';
+import { CreateProductPayload, Product } from '../services/product.interface';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -64,16 +64,30 @@ export class ProductStore {
     });
   }
 
-  createProduct(product: Partial<Product>): void {
-    this.loadingSignal.set(true);
-    this.productService.createProduct(product).subscribe({
-      next: () => this.fetchProducts(),
-      error: (err) => {
-        this.errorSignal.set('ไม่สามารถสร้างสินค้าได้');
-        this.loadingSignal.set(false);
-        console.error('❌ createProduct error:', err);
-      },
-    });
+  // createProduct(product: Partial<Product>): void {
+  //   this.loadingSignal.set(true);
+  //   this.productService.createProduct(product).subscribe({
+  //     next: () => this.fetchProducts(),
+  //     error: (err) => {
+  //       this.errorSignal.set('ไม่สามารถสร้างสินค้าได้');
+  //       this.loadingSignal.set(false);
+  //       console.error('❌ createProduct error:', err);
+  //     },
+  //   });
+  // }
+  async createProduct(payload: CreateProductPayload): Promise<void> {
+    try {
+      this.loadingSignal.set(true);
+      const created = await firstValueFrom(
+        this.productService.createProduct(payload)
+      );
+      this.productsSignal.update((products) => [...products, created]);
+    } catch (err) {
+      this.errorSignal.set('ไม่สามารถสร้างสินค้าได้');
+      throw err;
+    } finally {
+      this.loadingSignal.set(false);
+    }
   }
 
   updateProduct(id: string, data: Partial<Product>): void {

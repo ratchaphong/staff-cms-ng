@@ -12,3 +12,7 @@ export interface Product {
   deletedAt: string | null;
   status: 'ACTIVE' | 'INACTIVE';
 }
+
+export interface CreateProductPayload extends Partial<Product> {}
+
+export interface UpdateProductPayload extends Partial<Product> {}
