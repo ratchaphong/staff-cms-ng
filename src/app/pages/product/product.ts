@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ProductService } from '../../services/product';
 import { Router, RouterModule } from '@angular/router';
-import { Product } from '../../services/product.interface';
 import { Sidebar } from '../../shared/sidebar/sidebar';
-import { AuthService } from '../../services/auth';
-import { User } from '../../services/user.interface';
 import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
+import { ProductStore } from '../../store/product';
+import { AuthStore } from '../../store/auth';
 
 @Component({
   selector: 'app-product',
@@ -17,48 +15,35 @@ import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
   styleUrl: './product.scss',
 })
 export class ProductPage implements OnInit {
-  profile: User | null = null;
-  products: Product[] = [];
-  loading = false;
-  error = '';
+  private productStore = inject(ProductStore);
+  private authStore = inject(AuthStore);
+  private router = inject(Router);
 
-  constructor(
-    private productService: ProductService,
-    private authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
-    this.loading = true;
-    this.cdr.detectChanges();
-
-    this.authService.getProfile().subscribe({
-      next: (profile) => {
-        this.profile = profile;
-        this.fetchProducts();
-      },
-      error: () => {
-        this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
-        this.loading = false; // ✅ ปิด loading ทันทีเมื่อ error
-        this.cdr.detectChanges();
-      },
-    });
+  get profile() {
+    return this.authStore.profile();
   }
 
-  fetchProducts(): void {
-    this.productService.getProducts().subscribe({
-      next: (data) => {
-        this.products = data;
-        this.loading = false;
-        this.cdr.detectChanges(); // ✅ บังคับ refresh UI
-      },
-      error: (err) => {
-        this.error = 'โหลดข้อมูลผิดพลาด';
-        this.loading = false;
-        this.cdr.detectChanges(); // ✅ บังคับ refresh UI
-      },
-    });
+  get products() {
+    return this.productStore.products();
+  }
+
+  get loading() {
+    return this.productStore.loading();
+  }
+
+  get error() {
+    return this.productStore.error();
+  }
+
+  ngOnInit(): void {
+    this.authStore
+      .fetchProfile()
+      .then(() => {
+        this.productStore.fetchProducts();
+      })
+      .catch(() => {
+        alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
+      });
   }
 
   goToDetail(id: string): void {
