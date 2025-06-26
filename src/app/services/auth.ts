@@ -5,7 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { LoginPayload, RegisterPayload, UserProfile } from './auth.interface';
 import {
   clearToken,
-  getToken,
+  getAccessToken,
   getTokenTime,
   isBrowser,
   setAccessToken,
@@ -45,7 +45,7 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     if (!isBrowser()) return false;
-    const token = getToken();
+    const token = getAccessToken();
     const tokenTime = getTokenTime();
     if (!token || !tokenTime) return false;
 

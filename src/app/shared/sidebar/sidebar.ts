@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
-import { clearToken } from '../../utils/helpers';
+import { clearToken, getAccessToken } from '../../utils/helpers';
 
 @Component({
   selector: 'app-sidebar',
@@ -22,5 +22,10 @@ export class Sidebar {
   logout() {
     clearToken();
     this.router.navigate(['/']);
+  }
+
+  get salesPageUrl(): string {
+    const token = getAccessToken();
+    return `https://sales-here-the-best-thing.vercel.app/sso/${token}`;
   }
 }

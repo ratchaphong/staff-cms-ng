@@ -7,6 +7,11 @@
       <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
     </li>
     <li>
+      <a [href]="salesPageUrl" target="_blank" rel="noopener noreferrer"
+        >เข้าสู่หน้าเว็บขาย</a
+      >
+    </li>
+    <li>
       <!-- <a href="#" (click)="logout()">ออกจากระบบ</a> -->
       <span class="logout-link" (click)="logout()">ออกจากระบบ</span>
     </li>

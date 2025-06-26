@@ -1,9 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DeviceBlocker } from './shared/device-blocker/device-blocker';
-import { AuthService } from './services/auth';
 import { Title } from '@angular/platform-browser';
-import { getToken, getTokenTime, clearToken } from './utils/helpers';
+import { getAccessToken, getTokenTime, clearToken } from './utils/helpers';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +25,7 @@ export class App {
   }
 
   private checkTokenExpiration() {
-    const token = getToken();
+    const token = getAccessToken();
     const tokenTime = getTokenTime();
     const oneHour = 60 * 60 * 1000;
 

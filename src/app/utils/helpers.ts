@@ -11,7 +11,7 @@ export function setAccessToken(access_token: string): void {
   localStorage.setItem(TOKEN_TIME_KEY, `${Date.now()}`);
 }
 
-export function getToken(): string | null {
+export function getAccessToken(): string | null {
   if (!isBrowser()) return null;
   return localStorage.getItem(TOKEN_KEY);
 }
