@@ -6,6 +6,7 @@ import { User, UserQuery } from '../../services/user.interface';
 import { EditUserModal } from '../../shared/modals/edit-user-modal/edit-user-modal';
 import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
 import { UserStore } from '../../store/user';
+import { AuthStore } from '../../store/auth';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { UserStore } from '../../store/user';
 })
 export class Home implements OnInit {
   userStore = inject(UserStore);
+  authStore = inject(AuthStore);
 
   isEditModalVisible = false;
   selectedUser: User | null = null;
@@ -31,7 +33,7 @@ export class Home implements OnInit {
 
   // ✅ reactive ทุกครั้งที่ render
   get profile() {
-    return this.userStore.profile();
+    return this.authStore.profile();
   }
 
   get users() {
@@ -47,7 +49,14 @@ export class Home implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userStore.fetchProfileAndUsers(this.query);
+    this.authStore
+      .fetchProfile()
+      .then(() => {
+        this.userStore.fetchUsers(this.query);
+      })
+      .catch(() => {
+        alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
+      });
   }
 
   onSearch(): void {
@@ -72,20 +81,49 @@ export class Home implements OnInit {
     this.isEditModalVisible = true;
   }
 
-  updateUser(updatedUser: User) {
-    this.userStore.updateUser(updatedUser).subscribe({
-      next: () => {
-        this.isEditModalVisible = false;
-        this.userStore.fetchUsers(this.query);
-      },
-      error: () => alert('เกิดข้อผิดพลาดในการอัปเดตผู้ใช้'),
-    });
+  // updateUser(updatedUser: User) {
+  //   this.userStore.updateUser(updatedUser).subscribe({
+  //     next: () => {
+  //       this.isEditModalVisible = false;
+  //       this.userStore.fetchUsers(this.query);
+  //     },
+  //     error: () => alert('เกิดข้อผิดพลาดในการอัปเดตผู้ใช้'),
+  //   });
+  // }
+  async updateUser(updatedUser: User): Promise<void> {
+    try {
+      await this.userStore.updateUser(updatedUser);
+      this.isEditModalVisible = false;
+      await this.userStore.fetchUsers(this.query);
+    } catch (err) {
+      console.error('❌ updateUser error', err);
+      alert('เกิดข้อผิดพลาดในการอัปเดตผู้ใช้');
+    }
   }
 
-  confirmDelete(userId: string) {
+  // confirmDelete(userId: string) {
+  //   const confirmed = window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิกนี้?');
+  //   if (confirmed) {
+  //     this.userStore
+  //       .deleteUser(userId)
+  //       .then(() => {
+  //         this.userStore.fetchUsers(this.query);
+  //       })
+  //       .catch(() => {
+  //         alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
+  //       });
+  //   }
+  // }
+  async confirmDelete(userId: string): Promise<void> {
     const confirmed = window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสมาชิกนี้?');
-    if (confirmed) {
-      this.userStore.deleteUser(userId, this.query);
+    if (!confirmed) return;
+
+    try {
+      await this.userStore.deleteUser(userId);
+      await this.userStore.fetchUsers(this.query);
+    } catch (err) {
+      console.error('❌ deleteUser error:', err);
+      alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
     }
   }
 

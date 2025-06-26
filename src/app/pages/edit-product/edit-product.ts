@@ -1,13 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ProductService } from '../../services/product';
-import { UpdateProductPayload } from '../../services/product.interface';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { AuthService } from '../../services/auth';
-import { User } from '../../services/user.interface';
+import { UpdateProductPayload } from '../../services/product.interface';
+import { AuthStore } from '../../store/auth';
+import { ProductStore } from '../../store/product';
 
 @Component({
   selector: 'app-edit-product',
@@ -16,6 +15,13 @@ import { User } from '../../services/user.interface';
   styleUrl: './edit-product.scss',
 })
 export class EditProduct implements OnInit {
+  private authStore = inject(AuthStore);
+  private productStore = inject(ProductStore);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private sanitizer = inject(DomSanitizer);
+  private cdr = inject(ChangeDetectorRef);
+
   form: UpdateProductPayload = {
     name: '',
     description: '',
@@ -23,66 +29,69 @@ export class EditProduct implements OnInit {
     status: 'ACTIVE',
     image: '',
   };
-  imagePreview: SafeUrl | null = null;
-  profile: User | null = null;
 
+  imagePreview: SafeUrl | null = null;
   error = '';
   productId = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private productService: ProductService,
-    private authService: AuthService,
-    private router: Router,
-    private sanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef // ✅ เพิ่มตรงนี้
-  ) {}
-
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.productId = this.route.snapshot.paramMap.get('id') ?? '';
-    if (this.productId) {
-      this.authService.getProfile().subscribe({
-        next: (profile) => {
-          this.profile = profile;
-          this.productService.getProductById(this.productId).subscribe({
-            next: (data) => {
-              this.form = {
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                status: data.status,
-                image: data.image,
-              };
-              this.imagePreview = data.image;
-              this.cdr.detectChanges(); // ✅ เพื่อให้ UI ทันรู้ว่ามี profile แล้ว
-            },
-            error: () => {
-              this.error = 'ไม่พบสินค้านี้';
-            },
-          });
-        },
-        error: () => {
-          this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
-        },
-      });
+    if (!this.productId) return;
+
+    try {
+      await this.authStore.fetchProfile();
+
+      const profile = this.authStore.profile();
+      if (!profile) {
+        this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
+        return;
+      }
+
+      await this.productStore.fetchProductById(this.productId);
+      const product = this.productStore.selected();
+
+      if (!product) {
+        this.error = 'ไม่พบสินค้านี้';
+        return;
+      }
+
+      this.form = {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        status: product.status,
+        image: product.image,
+      };
+
+      this.imagePreview = product.image;
+      this.cdr.detectChanges();
+    } catch (err) {
+      this.error = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+      console.error(err);
     }
   }
 
-  onSubmit(): void {
-    this.productService
-      .updateProduct(this.productId, {
-        ...this.form,
-        status: this.form.status,
-      })
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/product']);
-        },
-        error: (err) => {
-          this.error = 'เกิดข้อผิดพลาดในการอัปเดต';
-          console.error(err);
-        },
-      });
+  async onSubmit(): Promise<void> {
+    try {
+      await this.productStore.updateProduct(this.productId, this.form);
+      this.router.navigate(['/product']);
+    } catch (err) {
+      this.error = 'เกิดข้อผิดพลาดในการอัปเดต';
+      console.error(err);
+    }
+  }
+
+  async onDelete(): Promise<void> {
+    const confirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?');
+    if (!confirmed) return;
+
+    try {
+      await this.productStore.deleteProduct(this.productId);
+      this.router.navigate(['/product']);
+    } catch (err) {
+      this.error = 'ไม่สามารถลบสินค้าได้';
+      console.error(err);
+    }
   }
 
   onFileChange(event: Event): void {
@@ -94,31 +103,18 @@ export class EditProduct implements OnInit {
 
     reader.onload = () => {
       const base64 = reader.result as string;
-      this.form.image = base64; // แปลงเป็น base64 string
-      this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(base64); // ✅
-      console.log('👀 this.cdr =', this.cdr); // ถ้าเป็น undefined ที่นี่จะรู้เลย
-      this.cdr.detectChanges(); // ✅ บังคับ Angular อัปเดต UI
+      this.form.image = base64;
+      this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(base64);
+      this.cdr.detectChanges();
     };
 
     reader.readAsDataURL(file);
   }
 
-  onDelete(): void {
-    const confirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการลบสินค้านี้?');
-    if (!confirmed) return;
-
-    this.productService.deleteProduct(this.productId).subscribe({
-      next: () => {
-        this.router.navigate(['/product']);
-      },
-      error: (err) => {
-        this.error = 'ไม่สามารถลบสินค้าได้';
-        console.error(err);
-      },
-    });
-  }
-
   canManageProducts(): boolean {
-    return this.profile?.role === 'STAFF' || this.profile?.role === 'ADMIN';
+    return (
+      this.authStore.profile()?.role === 'STAFF' ||
+      this.authStore.profile()?.role === 'ADMIN'
+    );
   }
 }
