@@ -49,14 +49,7 @@ export class Home implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authStore
-      .fetchProfile()
-      .then(() => {
-        this.userStore.fetchUsers(this.query);
-      })
-      .catch(() => {
-        alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
-      });
+    this.userStore.fetchUsers(this.query);
   }
 
   onSearch(): void {

@@ -18,6 +18,7 @@ export class Sidebar {
     { path: '/home', label: 'จัดการสมาชิก' },
     { path: '/product', label: 'จัดการผลิตภัณฑ์' },
     { path: '/profile', label: 'ดูโปรไฟล์' },
+    { path: '/login-history', label: 'ดูประวัติการเข้าสู่ระบบ' },
   ];
 
   logout() {

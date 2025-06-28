@@ -1,0 +1,60 @@
+.home-container {
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar ด้านซ้าย */
+app-sidebar {
+  flex-shrink: 0;
+}
+
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  height: 100vh;
+  overflow: auto;
+}
+
+h2 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+section {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+li:last-child {
+  border-bottom: none;
+}

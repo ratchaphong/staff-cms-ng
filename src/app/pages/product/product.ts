@@ -36,14 +36,7 @@ export class ProductPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authStore
-      .fetchProfile()
-      .then(() => {
-        this.productStore.fetchProducts();
-      })
-      .catch(() => {
-        alert('ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้');
-      });
+    this.productStore.fetchProducts();
   }
 
   goToDetail(id: string): void {

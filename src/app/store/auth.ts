@@ -6,6 +6,12 @@ import {
   LoginPayload,
   RegisterPayload,
 } from '../services/auth.interface';
+import {
+  isBrowser,
+  getAccessToken,
+  getTokenTime,
+  clearToken,
+} from '../utils/helpers';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
@@ -23,6 +29,28 @@ export class AuthStore {
 
   clearProfile() {
     this.profileSignal.set(null);
+  }
+
+  isLoggedIn(): boolean {
+    if (!isBrowser()) return false;
+    const token = getAccessToken();
+    const tokenTime = getTokenTime();
+    if (!token || !tokenTime) return false;
+
+    const now = Date.now();
+    const diff = now - parseInt(tokenTime, 10);
+    const oneHour = 60 * 60 * 1000;
+
+    const remainingMs = oneHour - diff;
+    const remainingMin = Math.floor(remainingMs / 1000 / 60);
+    const remainingSec = Math.floor((remainingMs / 1000) % 60);
+    console.log(`🕒 Session remaining: ${remainingMin}m ${remainingSec}s`);
+
+    if (diff > oneHour) {
+      clearToken();
+      return false;
+    }
+    return true;
   }
 
   async login(payload: LoginPayload): Promise<void> {

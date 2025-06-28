@@ -42,21 +42,4 @@ export class AuthService {
   getProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.baseUrl}/profile`);
   }
-
-  isLoggedIn(): boolean {
-    if (!isBrowser()) return false;
-    const token = getAccessToken();
-    const tokenTime = getTokenTime();
-    if (!token || !tokenTime) return false;
-
-    const now = Date.now();
-    const diff = now - parseInt(tokenTime, 10);
-    const oneHour = 60 * 60 * 1000;
-
-    if (diff > oneHour) {
-      clearToken();
-      return false;
-    }
-    return true;
-  }
 }

@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { DeviceBlocker } from './shared/device-blocker/device-blocker';
 import { Title } from '@angular/platform-browser';
 import { getAccessToken, getTokenTime, clearToken } from './utils/helpers';
+import { AuthStore } from './store/auth';
 
 @Component({
   selector: 'app-root',
@@ -12,28 +13,32 @@ import { getAccessToken, getTokenTime, clearToken } from './utils/helpers';
 })
 export class App {
   private titleService = inject(Title); // ✅ Inject Title service
+  private authStore = inject(AuthStore); // ✅ inject store
 
   ngOnInit(): void {
     this.titleService.setTitle('CMS Admin');
-
-    this.checkTokenExpiration();
-
-    // ตรวจสอบ token ทุก 1 นาที
-    setInterval(() => {
-      this.checkTokenExpiration();
-    }, 60 * 1000);
-  }
-
-  private checkTokenExpiration() {
-    const token = getAccessToken();
-    const tokenTime = getTokenTime();
-    const oneHour = 60 * 60 * 1000;
-
-    if (token && tokenTime) {
-      const age = Date.now() - parseInt(tokenTime, 10);
-      if (age > oneHour) {
-        clearToken();
-      }
+    if (this.authStore.isLoggedIn()) {
+      console.log('✅ User is logged in');
+      this.authStore.fetchProfile();
     }
+
+    // this.checkTokenExpiration();
+
+    // setInterval(() => {
+    //   this.checkTokenExpiration();
+    // }, 60 * 1000);
   }
+
+  // private checkTokenExpiration() {
+  //   const token = getAccessToken();
+  //   const tokenTime = getTokenTime();
+  //   const oneHour = 60 * 60 * 1000;
+
+  //   if (token && tokenTime) {
+  //     const age = Date.now() - parseInt(tokenTime, 10);
+  //     if (age > oneHour) {
+  //       clearToken();
+  //     }
+  //   }
+  // }
 }

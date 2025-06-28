@@ -1,0 +1,61 @@
+<div class="home-container">
+  <app-sidebar />
+
+  <div class="main-content">
+    <app-loading-overlay [visible]="store.loading()" />
+
+    <h2>ประวัติการเข้าสู่ระบบ</h2>
+
+    <section>
+      <h3>🔹 ของฉัน</h3>
+      <ul>
+        <li *ngFor="let log of store.myLogs()">
+          <div>
+            <strong>เวลาเข้า:</strong>
+            {{ log.loginAt | date: 'short' }}
+          </div>
+          <div>
+            <strong>เวลาออก:</strong>
+            {{ log.logoutAt ? (log.logoutAt | date: 'short') : '-' }}
+          </div>
+          <div>
+            <strong>IP:</strong>
+            {{ log.ip }}
+          </div>
+          <div>
+            <strong>อุปกรณ์:</strong>
+            {{ log.userAgent }}
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>🔸 ของผู้ใช้ทั้งหมด</h3>
+      <ul>
+        <li *ngFor="let log of store.allLogs()">
+          <div>
+            <strong>User:</strong>
+            <a [routerLink]="['/home', log.userId]"> {{ log.userId }} </a>
+          </div>
+          <div>
+            <strong>เวลาเข้า:</strong>
+            {{ log.loginAt | date: 'short' }}
+          </div>
+          <div>
+            <strong>เวลาออก:</strong>
+            {{ log.logoutAt ? (log.logoutAt | date: 'short') : '-' }}
+          </div>
+          <div>
+            <strong>IP:</strong>
+            {{ log.ip }}
+          </div>
+          <div>
+            <strong>อุปกรณ์:</strong>
+            {{ log.userAgent }}
+          </div>
+        </li>
+      </ul>
+    </section>
+  </div>
+</div>

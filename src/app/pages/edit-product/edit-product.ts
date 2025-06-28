@@ -39,8 +39,6 @@ export class EditProduct implements OnInit {
     if (!this.productId) return;
 
     try {
-      await this.authStore.fetchProfile();
-
       const profile = this.authStore.profile();
       if (!profile) {
         this.error = 'ไม่สามารถโหลดโปรไฟล์ผู้ใช้ได้';
