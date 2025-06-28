@@ -63,6 +63,7 @@ export class AuthStore {
 
   async fetchProfile(): Promise<void> {
     this.loadingSignal.set(true);
+    this.clearProfile();
     try {
       // const profile = await this.authService.getProfile().toPromise();
       const profile = await firstValueFrom(this.authService.getProfile());

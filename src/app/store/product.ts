@@ -41,6 +41,7 @@ export class ProductStore {
   async fetchProducts(): Promise<void> {
     this.loadingSignal.set(true);
     this.errorSignal.set('');
+    this.productsSignal.set([]);
 
     try {
       const products = await firstValueFrom(this.productService.getProducts());

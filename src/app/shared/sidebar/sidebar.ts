@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { clearToken, getAccessToken } from '../../utils/helpers';
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, LogoComponent],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })

@@ -6,17 +6,18 @@ import { LoadingOverlay } from '../../shared/loading-overlay/loading-overlay';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '../../store/auth';
 import { LoginPayload, RegisterPayload } from '../../services/auth.interface';
+import { LogoComponent } from '../../shared/logo/logo.component';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingOverlay],
+  imports: [CommonModule, FormsModule, LoadingOverlay, LogoComponent],
   templateUrl: './auth.html',
   styleUrls: ['./auth.scss'],
 })
 export class Auth {
   isLoginMode = true;
-
+  mainColor = 'var(--color-text)';
   loginForm: LoginPayload = {
     email: '',
     password: '',

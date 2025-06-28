@@ -1,6 +1,11 @@
 <div class="auth-container">
   <app-loading-overlay [visible]="loading" />
   <div class="auth-form">
+    <app-logo
+      [mainText]="'Everything we can mange it'"
+      [highlight]="'S & H'"
+      [mainColor]="mainColor"
+    ></app-logo>
     <h2>{{ isLoginMode ? 'เข้าสู่ระบบ' : 'ลงทะเบียน' }}</h2>
 
     <form (ngSubmit)="onSubmit(form)" #form="ngForm">
