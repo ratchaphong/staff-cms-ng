@@ -48,8 +48,8 @@ export class AuthStore {
     console.log(`🕒 Session remaining: ${remainingMin}m ${remainingSec}s`);
 
     if (diff > oneHour) {
-      clearToken();
       this.logout();
+      clearToken();
       return false;
     }
     return true;

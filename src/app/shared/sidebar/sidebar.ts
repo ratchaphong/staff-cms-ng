@@ -25,7 +25,6 @@ export class Sidebar {
 
   async logout() {
     await this.authStore.logout();
-
     clearToken();
     this.router.navigate(['/']);
   }
