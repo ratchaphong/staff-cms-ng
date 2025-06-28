@@ -40,6 +40,7 @@ export class Auth {
     try {
       if (this.isLoginMode) {
         await this.authStore.login(this.loginForm);
+        await this.authStore.fetchProfile();
         this.router.navigate(['/home']);
       } else {
         await this.authStore.register(this.registerForm);

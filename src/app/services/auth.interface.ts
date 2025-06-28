@@ -20,3 +20,10 @@ export interface UserProfile {
   isDeleted: boolean;
   role: 'USER' | 'ADMIN' | 'STAFF'; // ขึ้นอยู่กับระบบคุณ
 }
+
+export interface UpdateProfilePayload {
+  name: string;
+  avatar: string;
+  phoneNumber: string;
+  address: string;
+}

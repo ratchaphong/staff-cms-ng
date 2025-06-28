@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { clearToken, getAccessToken } from '../../utils/helpers';
 import { LogoComponent } from '../logo/logo.component';
+import { AuthStore } from '../../store/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,6 +14,7 @@ import { LogoComponent } from '../logo/logo.component';
 })
 export class Sidebar {
   private router = inject(Router);
+  private authStore = inject(AuthStore);
 
   links = [
     { path: '/home', label: 'จัดการสมาชิก' },
@@ -21,7 +23,9 @@ export class Sidebar {
     { path: '/login-history', label: 'ดูประวัติการเข้าสู่ระบบ' },
   ];
 
-  logout() {
+  async logout() {
+    await this.authStore.logout();
+
     clearToken();
     this.router.navigate(['/']);
   }

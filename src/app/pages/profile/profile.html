@@ -1,10 +1,63 @@
 <div class="profile-container">
   <app-sidebar />
+  <app-loading-overlay [visible]="authStore.loading()" />
 
   <div class="content">
-    <div class="under-construction">
-      <h2>🔧 กำลังอยู่ในระหว่างปรับปรุง</h2>
-      <p>หน้านี้กำลังถูกพัฒนา โปรดกลับมาใหม่อีกครั้งเร็วๆ นี้</p>
+    <h2>โปรไฟล์ผู้ใช้</h2>
+
+    <div *ngIf="authStore.profile() as profile">
+      <div *ngIf="!editing">
+        <img
+          *ngIf="profile.avatar"
+          [src]="profile.avatar"
+          alt="Avatar"
+          class="avatar"
+        />
+        <p><strong>ชื่อ:</strong> {{ profile.name }}</p>
+        <p><strong>Email:</strong> {{ profile.email }}</p>
+        <p><strong>เบอร์โทร:</strong> {{ profile.phoneNumber || '-' }}</p>
+        <p><strong>ที่อยู่:</strong> {{ profile.address || '-' }}</p>
+        <button (click)="toggleEdit()">แก้ไข</button>
+      </div>
+
+      <form *ngIf="editing" (ngSubmit)="save()">
+        <div class="avatar-wrapper">
+          <img
+            [src]="formData.avatar || 'https://placehold.co/120x120'"
+            alt="Avatar"
+            class="avatar editable"
+            (click)="fileInput.click()"
+          />
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            hidden
+            (change)="onFileSelected($event)"
+          />
+        </div>
+
+        <!-- ฟิลด์อื่นๆ -->
+        <div>
+          <label>ชื่อ</label>
+          <input [(ngModel)]="formData.name" name="name" />
+        </div>
+        <div>
+          <label>เบอร์โทร</label>
+          <input [(ngModel)]="formData.phoneNumber" name="phoneNumber" />
+        </div>
+        <div>
+          <label>ที่อยู่</label>
+          <textarea [(ngModel)]="formData.address" name="address"></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit">บันทึก</button>
+          <button type="button" (click)="cancelEdit()" class="btn-secondary">
+            ยกเลิก
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

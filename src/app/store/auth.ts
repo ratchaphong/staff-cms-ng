@@ -5,6 +5,7 @@ import {
   UserProfile,
   LoginPayload,
   RegisterPayload,
+  UpdateProfilePayload,
 } from '../services/auth.interface';
 import {
   isBrowser,
@@ -48,6 +49,7 @@ export class AuthStore {
 
     if (diff > oneHour) {
       clearToken();
+      this.logout();
       return false;
     }
     return true;
@@ -101,6 +103,30 @@ export class AuthStore {
     } catch (error) {
       console.error('❌ Failed to fetch profile:', error);
       this.clearProfile();
+    } finally {
+      this.loadingSignal.set(false);
+    }
+  }
+
+  async updateProfile(payload: UpdateProfilePayload): Promise<void> {
+    this.loadingSignal.set(true);
+    try {
+      await firstValueFrom(this.authService.updateProfile(payload));
+    } catch (error) {
+      console.error('❌ Update profile failed:', error);
+      throw error;
+    } finally {
+      this.loadingSignal.set(false);
+    }
+  }
+
+  async logout(): Promise<void> {
+    this.loadingSignal.set(true);
+    try {
+      await firstValueFrom(this.authService.logout());
+    } catch (error) {
+      console.error('❌ Logout failed:', error);
+      throw error;
     } finally {
       this.loadingSignal.set(false);
     }

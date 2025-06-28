@@ -1,9 +1,8 @@
 <div class="home-container">
   <app-sidebar />
+  <app-loading-overlay [visible]="store.loading()" />
 
   <div class="main-content">
-    <app-loading-overlay [visible]="store.loading()" />
-
     <h2>ประวัติการเข้าสู่ระบบ</h2>
 
     <section>
